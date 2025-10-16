@@ -1,0 +1,493 @@
+<!DOCTYPE html> 
+<html lang="zh-TW"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>鵬展教育中心 - 網站首頁</title> 
+    <style> 
+        :root { 
+            /* 顏色變數 (略) */ 
+            --color-edm: #e76f51; 
+            --color-list: #f4a261; 
+            --color-instagram: #264653; 
+            --color-branch: #2a9d8f; 
+            --color-monitor: #219ebc; 
+            
+            --color-home: #808080; 
+            
+            --text-light: #fff; 
+            --text-dark: #333; 
+            --nav-height: 60px; /* 導覽按鈕統一高度 */ 
+            --tab-label-height: 0px; 
+            --tab-offset: 0px; 
+            
+            /* 新增變數：水平導覽列寬度 (略) */
+            --side-nav-width: 300px; 
+            --side-nav-padding: 20px; 
+            
+            /* 【新變數】內容區域的預設高度 */
+            --content-default-height: 640px; 
+            /* 【移除】不再需要固定 --module-initial-height，改為自適應 */
+            /* --module-initial-height: 700px; */
+        } 
+
+        body { 
+            margin: 0; 
+            font-family: Arial, sans-serif; 
+            background-color: #f0f0f0; 
+            line-height: 1.6;
+        } 
+
+        .site-content {
+            padding-top: 5vh; 
+            padding-bottom: 100px; 
+        }
+
+        /* 浮動模組容器 */
+        .floating-module {
+            width: 90vw; 
+            max-width: 1000px; 
+            
+            margin: 0 auto; 
+            position: relative; 
+            overflow: visible; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); 
+            background-color: #fff; 
+            margin-bottom: 80px; 
+            
+            transition: height 0.6s ease-out, border-radius 0.6s ease-out;
+            background-image: none; 
+        }
+
+        /* 模組基本內容區域（包含封面圖片） */
+        .module-base-content {
+            position: relative;
+            /* 【關鍵修正 1.1】移除固定高度，改用自適應高度 */
+            height: auto; 
+            overflow: hidden;
+            border-radius: 12px 12px 0 0; 
+            background-color: #f0f0f0; 
+        }
+        
+        /* 獨立的封面圖片樣式 */
+        .module-base-content img.cover-image {
+            width: 100%;
+            /* 【關鍵修正 1.2】移除 height: 100%，讓高度由圖片比例決定 */
+            height: auto; 
+            /* 【關鍵修正 1.3】將 object-fit: cover 改為 contain 或直接移除 (因 height: auto)，
+               為了兼容性和明確性，使用 contain 確保圖片完整顯示，且不被拉伸 */
+            object-fit: contain; 
+            display: block;
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* 底部快速導覽按鈕列 (quick-links) 樣式 */
+        /* ------------------------------------------------------------------ */
+        .quick-links { 
+            flex-shrink: 0; 
+            height: var(--nav-height); 
+            display: flex; 
+            width: 100%; 
+            position: relative; 
+            bottom: 0; 
+            left: 0;
+            z-index: 1000; 
+            box-shadow: none; 
+            background-color: var(--color-home); 
+            border-radius: 0; 
+        } 
+        
+        /* (按鈕樣式保持不變，略) */
+        .quick-link-btn { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            color: var(--text-light); 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: background-color 0.3s ease; 
+            position: relative; 
+            text-decoration: none; 
+            background-color: var(--color-home); 
+            transform: none !important;
+        } 
+        .quick-link-btn.is-active-nav { z-index: 1100; }
+        .quick-link-btn:not(.btn-home)::after { /* ... (略) */ }
+        .quick-link-btn:not(.btn-home).is-active-nav::after { opacity: 1; }
+        .btn-edm { background-color: var(--color-edm); }
+        .btn-list { background-color: var(--color-list); }
+        .btn-insta { background-color: var(--color-instagram); }
+        .btn-branch { background-color: var(--color-branch); }
+        .btn-monitor { background-color: var(--color-monitor); }
+        .quick-link-btn:not(.btn-home) { flex-grow: 1; transform: none; margin-right: 0; padding-right: 0; } 
+        .quick-link-btn:not(.btn-home) > span { transform: none; display: block; } 
+        .btn-home { 
+            flex-grow: 0; 
+            width: var(--nav-height); 
+            height: var(--nav-height); 
+            background-color: var(--color-home); 
+            margin-left: 1px;
+            z-index: 1200 !important; 
+            transform: none; 
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 12px; 
+        } 
+        .btn-home img { 
+            height: 80%; 
+            width: 80%; 
+            object-fit: contain;
+            transform: none; 
+        } 
+        /* ------------------------------------------------------------------ */
+        /* 堆疊式標籤頁容器 - 向下伸長邏輯 */
+        /* ------------------------------------------------------------------ */
+        .stacked-tabs-container { 
+            position: relative; 
+            width: 100%; 
+            height: 0; 
+            
+            transform-origin: top; 
+            transition: height 0.6s ease-out; 
+            
+            z-index: 990; 
+            overflow: hidden; 
+            
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        } 
+        
+        /* Tab Panel 結構 (略) */
+        .tab-panel { 
+            position: absolute; 
+            height: 100%; 
+            width: 100%; 
+            top: 0; 
+            left: 0; 
+            
+            opacity: 0;
+            transition: opacity 0.3s ease 0.3s; 
+            
+            box-sizing: border-box; 
+            color: var(--text-light); 
+            background-color: #333; 
+        } 
+
+        /* (其他內容和抽屜導覽樣式略) */
+        .tab-panel.active { opacity: 1; }
+        .edm { background-color: var(--color-edm); }
+        .list { color: var(--text-dark); background-color: var(--color-list); }
+        .insta { background-color: var(--color-instagram); }
+        .branch { background-color: var(--color-branch); }
+        .monitor { background-color: var(--color-monitor); }
+        .tab-panel .tab-label { display: none; }
+        .tab-panel .tab-content { position: relative; z-index: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; height: 100%; width: 100%; box-sizing: border-box; padding: 20px; }
+        .edm .tab-content, .insta .tab-content { display: flex; padding: 0; box-sizing: border-box; padding-top: 20px; padding-bottom: 20px; overflow-y: auto; width: 100%; }
+        .edm-left, .insta-left { flex: 0 0 50%; height: 100%; background-size: contain; background-position: center; background-repeat: no-repeat; display: flex; justify-content: center; align-items: center; }
+        .edm-right, .insta-right { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        
+        .list .tab-content h2 { color: var(--text-dark); }
+        .list .tab-content a { color: #4a90e2; text-decoration: underline; }
+        .list .tab-content a:hover { color: #357ae8; }
+        .list-link-group { display: flex; flex-direction: column; gap: 20px; }
+        .edm-left { background-image: url('鵬展教育中心.jpg'); }
+        .insta-left { background-image: url('IG頁面.jpg'); }
+        .edm-header h2 { font-size: 2em; margin-top: 0; }
+        .edm-bottom-content, .insta-bottom-content { text-align: center; padding-top: 20px; }
+        .edm-bottom-content p, .insta-bottom-content p { font-size: 1.2em; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; margin-top: 0; }
+        .edm-bottom-content img, .insta-bottom-content img { max-width: 100%; height: auto; display: block; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: transform 0.3s ease; }
+        .edm-bottom-content img:hover, .insta-bottom-content img:hover { transform: scale(1.02); }
+        @keyframes blink { 0%, 100% { opacity: 1; transform: translateY(0); } 50% { opacity: 0.2; transform: translateY(5px); } }
+        .arrow-blink { display: inline-block; animation: blink 1.5s infinite ease-in-out; margin-left: 8px; }
+        .monitor-ad a { display: block; cursor: pointer; }
+        .monitor-ad img { max-width: 100%; height: auto; display: block; border-radius: 4px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); transition: opacity 0.3s ease; }
+        .monitor-ad img:hover { opacity: 0.9; }
+        .other-website-content { width: 90vw; max-width: 1000px; margin: 0 auto; padding: 40px; background-color: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); margin-top: 40px; color: var(--text-dark); box-sizing: border-box; }
+        
+        #fixed-nav-container { position: fixed; top: 20px; left: 20px; height: var(--nav-height); z-index: 2000; display: flex; align-items: center; width: var(--nav-height); overflow: hidden; transition: width 0.4s ease-out; border-radius: 4px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); background-color: rgba(128, 128, 128, 0.6); }
+        #fixed-nav-container.is-open { width: calc(var(--nav-height) + var(--side-nav-width) + var(--side-nav-padding)); }
+        #fixed-logo-btn { position: relative; width: var(--nav-height); height: var(--nav-height); background-color: transparent; box-shadow: none; border-radius: 0; cursor: pointer; flex-shrink: 0; display: flex; justify-content: center; align-items: center; transition: transform 0.3s ease; }
+        #fixed-logo-btn:hover { background-color: rgba(0, 0, 0, 0.1); transform: scale(1.05); }
+        #fixed-logo-btn img { max-width: 80%; max-height: 80%; object-fit: contain; }
+        #side-nav-horizontal { height: 100%; background-color: transparent; display: flex; align-items: center; width: var(--side-nav-width); transition: none; padding: 0 10px; flex-shrink: 0; margin-left: 0; }
+        .side-nav-item { padding: 12px 10px; color: var(--text-light); text-decoration: none; text-align: center; font-size: 1em; font-weight: 500; transition: background-color 0.2s ease, color 0.2s ease; white-space: nowrap; flex-shrink: 0; }
+        .side-nav-item:hover { background-color: rgba(255, 255, 255, 0.2); color: #fff; }
+    </style> 
+</head> 
+<body> 
+
+    <div id="fixed-nav-container">
+        <div id="fixed-logo-btn">
+            <img src="鵬展浮動logo.png" alt="鵬展 Logo">
+        </div>
+        
+        <nav id="side-nav-horizontal">
+            <a href="#" class="side-nav-item">按鈕一</a>
+            <a href="#" class="side-nav-item">按鈕二</a>
+            <a href="#" class="side-nav-item">按鈕三</a>
+            <a href="#" class="side-nav-item">按鈕四</a>
+        </nav>
+    </div>
+
+    <main class="site-content">
+        
+        <section class="floating-module" id="main-module"> 
+            
+            <div class="module-base-content">
+                <img src="封面.jpg" alt="鵬展教育中心封面圖" class="cover-image">
+            </div>
+            
+            <nav class="quick-links"> 
+                <a class="quick-link-btn btn-edm" data-target="edm" href="#" data-index="1"><span>EDM</span></a> 
+                <a class="quick-link-btn btn-list" data-target="list" href="#" data-index="2"><span>榜單</span></a> 
+                <a class="quick-link-btn btn-insta" data-target="insta" href="#" data-index="3"><span>Instagram</span></a> 
+                <a class="quick-link-btn btn-branch" data-target="branch" href="#" data-index="4"><span>鵬展分校</span></a> 
+                <a class="quick-link-btn btn-monitor" data-target="monitor" href="#" data-index="5"><span>監視系統</span></a> 
+                <a class="quick-link-btn btn-home" id="home-btn" href="#" data-index="6"> 
+                    <img src="首頁.png" alt="回到首頁"> 
+                </a> 
+            </nav> 
+            
+            <div class="stacked-tabs-container" id="stacked-tabs"> 
+                
+                <section id="edm" class="tab-panel edm"> 
+                    <div class="tab-label"><span>EDM</span></div> 
+                    <div class="tab-content">
+                        <div class="edm-left"></div> 
+                        <div class="edm-right">
+                            <div class="edm-header"><h2>堅持與陪伴的起點</h2></div>
+                            <div class="edm-bottom-content">
+                                <p>鵬展傳送門<span class="arrow-blink">⬇️</span></p>
+                                <a href="http://www.pjmath.tw/" target="_blank">
+                                    <img src="學長正身照.jpg" alt="學長正身照 - 點擊了解更多" title="點擊前往鵬展官網">
+                                </a>
+                            </div>
+                            <p style="color: #333; font-size: 0.8em; margin-top: 40px;">（如果右側內容很多，這裡可以滾動）</p>
+                        </div>
+                    </div> 
+                </section> 
+                
+                <section id="list" class="tab-panel list"> 
+                    <div class="tab-label"><span>榜單</span></div> 
+                    <div class="tab-content">
+                        <div class="list-link-group">
+                            <h2><a href="https://photos.google.com/share/AF1QipNi7aFa1KfZe65AP5DB65MG-cOnRPnd1QjC_nYFIwilFCO_qmEMBkk4WIgoxEo6kA?key=WnAtN1FPbFNOLUlhN1lmTVFPZnZQT2lGUTJyTFhR" target="_blank">高中榜單</a></h2>
+                            <h2><a href="https://photos.google.com/share/AF1QipMhHnxtWwZ8ZYdB_DLAGwoE0pFp_zC9Oe56i4EpKzaWrbLxNiOqZzI44VujbNuxug?key=LW8xb1NGeXZhYjU5LWFhNGkxWEZkLU5DMm8yNDNR" target="_blank">國中榜單</a></h2>
+                        </div>
+                        <div style="height: 500px;"></div>
+                        <p>持續更新中！</p>
+                    </div> 
+                </section> 
+
+                <section id="insta" class="tab-panel insta"> 
+                    <div class="tab-label"><span>Instagram</span></div> 
+                    <div class="tab-content">
+                        <div class="insta-left"></div> 
+                        <div class="insta-right">
+                            <div class="insta-header"><h2>追蹤我們的最新動態！</h2></div>
+                            <div class="insta-bottom-content">
+                                <p>我們的IG傳送門<span class="arrow-blink">⬇️</span></p>
+                                <a href="https://www.instagram.com/p.j_math/" target="_blank">
+                                    <img src="IG_logo.png" alt="Instagram 傳送門" title="點擊前往 Instagram">
+                                </a>
+                            </div>
+                            <p style="color: #ccc; font-size: 0.8em; margin-top: 40px;">（如果右側內容很多，這裡可以滾動）</p>
+                        </div>
+                    </div> 
+                </section> 
+
+                <section id="branch" class="tab-panel branch"> 
+                    <div class="tab-label"><span>鵬展分校</span></div> 
+                    <div class="tab-content"><h2>分校資訊與地圖</h2><p>這是分校頁面的詳細內容，等待你提供各分校的地址和電話資訊。</p></div> 
+                </section> 
+
+                <section id="monitor" class="tab-panel monitor"> 
+                    <div class="tab-label"><span>監視系統</span></div> 
+                    <div class="tab-content">
+                        <div class="monitor-ad">
+                            <a href="監視系統EDM.jpg" target="_blank">
+                                <img src="監視系統EDM.jpg" alt="監視系統廣告" title="點擊在新分頁中查看大圖">
+                            </a>
+                        </div>
+                    </div> 
+                </section> 
+
+            </div> 
+        </section> 
+        
+        <section class="other-website-content">
+            <h2>關於我們</h2>
+            <p>鵬展教育中心致力於提供高品質的教育服務，幫助學生髮揮潛力，實現學業目標。</p>
+            <div class="content-placeholder">更多公司介紹</div>
+        </section>
+
+    </main>
+
+    <script> 
+        document.addEventListener('DOMContentLoaded', function() { 
+            // 水平導覽列邏輯 (略)
+            const fixedLogoBtn = document.getElementById('fixed-logo-btn');
+            const fixedNavContainer = document.getElementById('fixed-nav-container');
+
+            fixedLogoBtn.addEventListener('click', function() {
+                fixedNavContainer.classList.toggle('is-open');
+            });
+            
+            const module = document.getElementById('main-module');
+            const tabsContainer = document.getElementById('stacked-tabs'); 
+            const buttons = document.querySelectorAll('.quick-link-btn:not(.btn-home)'); 
+            const navButtons = document.querySelectorAll('.quick-link-btn'); 
+            const homeButton = document.getElementById('home-btn'); 
+            const panels = document.querySelectorAll('.tab-panel'); 
+            
+            const transitionDuration = 600; 
+            const zIndexDelay = 500; 
+            
+            const root = getComputedStyle(document.documentElement);
+            const navHeight = parseFloat(root.getPropertyValue('--nav-height')); 
+            const contentDefaultHeight = parseFloat(root.getPropertyValue('--content-default-height'));
+            const baseZIndex = 5; 
+            
+            let activeNavIndex = 0; 
+            
+            panels.forEach((panel) => { 
+                panel.style.zIndex = baseZIndex;
+            });
+
+            // 【關鍵修正 2.1】獲取封面圖片的高度
+            const coverImage = module.querySelector('.cover-image');
+            let initialModuleHeight = 0; // 初始化為 0
+
+            // 確保圖片載入完成後才能取得正確高度
+            coverImage.onload = updateInitialHeight;
+            // 如果圖片已經在快取中，也執行一次
+            if (coverImage.complete) {
+                updateInitialHeight();
+            }
+
+            function updateInitialHeight() {
+                // 圖片載入後，實際高度就是它的渲染高度
+                const imageRenderedHeight = coverImage.offsetHeight; 
+                if (imageRenderedHeight > 0) {
+                    initialModuleHeight = imageRenderedHeight;
+                    // 第一次載入時設定初始高度
+                    module.style.height = `${initialModuleHeight + navHeight}px`; 
+                }
+            }
+
+
+            buttons.forEach(button => { 
+                button.addEventListener('click', function(e) { 
+                    e.preventDefault(); 
+                    const targetIndex = parseInt(this.getAttribute('data-index')); 
+                    
+                    updateStackingAndPosition(targetIndex); 
+                }); 
+            }); 
+            
+            homeButton.addEventListener('click', function(e) { 
+                e.preventDefault(); 
+                
+                updateStackingAndPosition(0); 
+            }); 
+            
+            function updateStackingAndPosition(newIndex) {
+                
+                // 確保在操作前已經取得了圖片的實際高度
+                if (initialModuleHeight === 0) {
+                     // 如果還沒取得高度，先嘗試更新一次，並暫停操作
+                     updateInitialHeight();
+                     if (initialModuleHeight === 0) {
+                         console.error('封面圖片高度尚未載入，無法執行動畫。');
+                         return;
+                     }
+                }
+                
+                let nextActiveIndex = newIndex;
+                const isClosingCurrent = newIndex > 0 && newIndex === activeNavIndex;
+                
+                if (isClosingCurrent) {
+                    nextActiveIndex = 0; 
+                } else if (newIndex === 0) {
+                    nextActiveIndex = 0; 
+                }
+
+                const prevActiveIndex = activeNavIndex;
+                activeNavIndex = nextActiveIndex;
+                
+                
+                if (activeNavIndex > 0) {
+                    // 開啟時：動態設定模組總高度
+                    
+                    // 總高度 = 圖片實際高度 + 導覽列高度 (60px) + 內容預設高度 (640px)
+                    const newModuleHeight = initialModuleHeight + navHeight + contentDefaultHeight;
+                    
+                    // 伸長浮動模組高度 (推擠下方內容)
+                    module.style.height = `${newModuleHeight}px`; 
+                    
+                    // 設置內容容器的高度
+                    tabsContainer.style.height = `${contentDefaultHeight}px`;
+                    tabsContainer.classList.add('is-open');
+
+
+                } else {
+                    // 關閉時：縮回高度
+                    
+                    tabsContainer.classList.remove('is-open');
+                    
+                    // 延遲縮回高度，讓內容先收縮 (0.5s)
+                    setTimeout(() => {
+                        // 內容容器高度縮回 0
+                        tabsContainer.style.height = '0px'; 
+                        // 模組總高度縮回：圖片實際高度 + 導覽列高度
+                        module.style.height = `${initialModuleHeight + navHeight}px`; 
+                    }, 500); 
+                } 
+
+                navButtons.forEach(button => {
+                    const index = parseInt(button.getAttribute('data-index'));
+                    const panel = document.getElementById(button.getAttribute('data-target'));
+
+                    // 處理按鈕的 'is-active-nav' 類別
+                    button.classList.remove('is-active-nav');
+                    if (index === activeNavIndex && index !== 6) {
+                        button.classList.add('is-active-nav');
+                    }
+
+                    if (panel) {
+                        if (index === activeNavIndex && index !== 6) { 
+                            // Panel 顯示，z-index 增加
+                            panel.classList.add('active');
+                            panel.style.zIndex = baseZIndex + index;
+                        } else {
+                            // Panel 隱藏，z-index 降低
+                            panel.classList.remove('active');
+                            const isCurrentlyClosing = index === prevActiveIndex && activeNavIndex < prevActiveIndex;
+
+                            if (isCurrentlyClosing) {
+                                setTimeout(() => {
+                                    panel.style.zIndex = baseZIndex - index; 
+                                }, zIndexDelay);
+                            } else {
+                                panel.style.zIndex = baseZIndex - index; 
+                            }
+                        }
+                    }
+                });
+                
+                homeButton.classList.remove('is-active-nav');
+                if (activeNavIndex === 0) {
+                    homeButton.classList.add('is-active-nav');
+                }
+            }
+            
+            // 頁面載入時，將所有 Panel 設為隱藏
+            panels.forEach(panel => {
+                panel.classList.remove('active');
+            });
+            // 初始 tabs container 高度
+            tabsContainer.style.height = '0px';
+        }); 
+    </script> 
+</body> 
+</html>
