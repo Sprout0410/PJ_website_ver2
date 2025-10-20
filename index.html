@@ -123,6 +123,7 @@
         .monitor .tab-content {
             flex-direction: column;
             overflow-y: auto; 
+            align-items: center;
         }
         
         /* 內容元件樣式... (EDM, INSTA, MONITOR) */
@@ -133,7 +134,8 @@
         .edm-bottom-content img:hover, .insta-bottom-content img:hover { transform: scale(1.02); }
         @keyframes blink { 0%, 100% { opacity: 1; transform: translateY(0); } 50% { opacity: 0.2; transform: translateY(5px); } }
         .arrow-blink { color: var(--text-light); display: inline-block; animation: blink 1.5s infinite ease-in-out; margin-left: 8px; }
-        .monitor-ad a { display: block; cursor: pointer; }
+        .monitor-ad a { display: inline-block; cursor: pointer; }
+        .monitor-ad {width: 100%;  text-align: center; /* 讓圖片連結在這個容器內水平置中 */padding-top: 10px;}
         .monitor-ad img { max-width: 100%; height: auto; display: block; border-radius: 4px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); transition: opacity 0.3s ease; }
         .monitor-ad img:hover { opacity: 0.9; }
         .other-website-content { width: 90vw; max-width: 1000px; margin: 0 auto; padding: 40px; background-color: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); margin-top: 40px; color: var(--text-dark); box-sizing: border-box; }
