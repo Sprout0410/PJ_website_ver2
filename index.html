@@ -34,7 +34,6 @@
             position: relative; 
             overflow: visible; 
             border-radius: 12px; 
-            /* [修改 1] 刪除 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); */ 
             background-color: #fff; 
             margin-bottom: 80px; 
             transition: height var(--transition-duration) ease-out, border-radius var(--transition-duration) ease-out; 
@@ -51,7 +50,6 @@
             width: var(--nav-height); overflow: hidden; 
             transition: width 0.4s ease-out; 
             border-radius: 4px; 
-            /* [修改 1] 刪除 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); */ 
             background-color: rgba(128, 128, 128, 0.6); 
         }
         #fixed-nav-container.is-open { width: calc(var(--nav-height) + var(--side-nav-width) + var(--side-nav-padding)); }
@@ -105,7 +103,6 @@
             position: relative; width: 100%; height: 0; 
             transform-origin: top; transition: height var(--transition-duration) ease-out; 
             z-index: 990; overflow: hidden; border-radius: 0; 
-            /* [修改 1] 刪除 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); */ 
         } 
         .tab-panel { 
             position: absolute; height: 100%; width: 100%; 
@@ -151,11 +148,10 @@
             align-items: center;
         }
 
-        /* [修改 2] 調整 monitor.tab-content 確保內容置中 */
         .monitor .tab-content {
             flex-direction: column; 
-            align-items: center; /* 水平置中 */
-            justify-content: center; /* 垂直置中 (可選，但對於單一元素較好) */
+            align-items: center; 
+            justify-content: center; 
         }
         
         .edm .tab-content, 
@@ -201,22 +197,20 @@
         .arrow-blink { color: var(--text-light); display: inline-block; animation: blink 1.5s infinite ease-in-out; margin-left: 8px; }
         
         /* ------------------------------------------------------------------ */
-        /* 監視系統 (Monitor) 專用樣式 - 確保圖片置中 */
+        /* 監視系統 (Monitor) 專用樣式 */
         /* ------------------------------------------------------------------ */
         .monitor-ad {
             width: 100%; 
             text-align: center; 
             padding-top: 10px;
-            /* [修改 2] 確保 monitor-ad 容器本身不會影響置中 */
             display: flex;
-            justify-content: center; /* 水平置中圖片 */
+            justify-content: center; 
             align-items: center; 
-            flex-grow: 1; /* 讓容器佔滿可用空間 */
+            flex-grow: 1; 
         }
-        .monitor-ad a { display: block; cursor: pointer; margin: auto; } /* margin: auto 輔助置中 */
+        .monitor-ad a { display: block; cursor: pointer; margin: auto; } 
         .monitor-ad img { 
             max-width: 100%; height: auto; display: block; border-radius: 4px; 
-            /* [修改 1] 刪除 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); */ 
             transition: opacity 0.3s ease; 
         }
         .monitor-ad img:hover { opacity: 0.9; }
@@ -245,7 +239,6 @@
             background-color: #ffffff; 
             border-radius: 12px;
             padding: 20px;
-            /* [修改 1] 刪除 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); */ 
             display: flex; 
             gap: 20px;
         }
@@ -256,13 +249,17 @@
             border-radius: 8px;
             position: relative;
             cursor: pointer; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
         }
 
         .card-left img {
             width: 100%;
-            height: auto;
+            height: 100%; 
             display: block;
             transition: transform 0.3s ease;
+            object-fit: contain; /* 確保卡片內的地圖圖片完整顯示 */
         }
 
         .card-left img:hover {
@@ -310,7 +307,7 @@
         }
 
         /* ------------------------------------------------------------------ */
-        /* 圖片特寫模態視窗 (Modal) 樣式 - 保持陰影以突出 */
+        /* 圖片特寫模態視窗 (Modal) 樣式 - 修正圖片縮放 */
         /* ------------------------------------------------------------------ */
 
         .modal-overlay {
@@ -337,11 +334,11 @@
             width: 90vw; 
             max-height: 500px; 
             height: 90vh; 
-            overflow: auto; 
+            overflow: hidden; /* 確保內容不會溢出 */
             padding: 30px; 
             border-radius: 20px;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* 保持 Modal 視窗的陰影 */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -375,17 +372,25 @@
             width: 100%;
             border-radius: 12px; 
             overflow: hidden; 
+            flex-grow: 1; /* 讓圖片容器佔滿所有可用空間 */
+            display: flex;
+            justify-content: center; /* 水平置中 */
+            align-items: center; /* 垂直置中 */
         }
 
         #modal-image {
-            width: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
             height: auto;
             display: block;
+            **object-fit: contain;** /* 關鍵：確保地圖完整顯示，不被裁切 */
         }
 
         .modal-address-info {
             text-align: center;
             margin-top: 20px;
+            flex-shrink: 0; /* 防止地址欄位被壓縮 */
         }
 
         .modal-address-info a {
@@ -458,7 +463,7 @@
                                 <p>鵬展傳送門<span class="arrow-blink">⬇️</span></p>
                                 <a href="http://www.pjmath.tw/" target="_blank">
                                     <img src="浮動視窗內容/EDM/學長正身照.jpg" alt="學長正身照 - 點擊了解更多" title="點擊前往鵬展官網">
-                                }</a>
+                                </a>
                             </div>
                         </div>
                     </div> 
